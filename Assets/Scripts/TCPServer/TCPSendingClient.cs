@@ -21,7 +21,7 @@ public class TCPSendingClient : MonoBehaviour
     public string serverIP = "localhost";
     public int paketeProSekunde = 10;
     public byte[] dmxZwischenspeicherUniverse0;
-    public string dmxZwischenspeicherUniverse1;
+    public byte[] dmxZwischenspeicherUniverse1;
 
     public DmxControllerServerVersion dmxcontroller;
     // Use this for initialization 	
@@ -54,8 +54,26 @@ public class TCPSendingClient : MonoBehaviour
 
     private void SendArtNet()
     {
-        //SendMessage(dmxZwischenspeicherUniverse0);
-        // SendMessage(dmxZwischenspeicherUniverse1);
+
+        //only send when there is a connection
+
+
+        //only Send if there is soemthing to send!
+       if (socketConnection != null)
+        {
+            //TODO: Only send if there is a change !
+            if (dmxZwischenspeicherUniverse0.Length != 0)
+            {
+                SendMessage(dmxZwischenspeicherUniverse0);
+            }
+
+            if (dmxZwischenspeicherUniverse1.Length != 0)
+            {
+                SendMessage(dmxZwischenspeicherUniverse1);
+            }
+        }
+
+        
 
     }
     /// <summary> 
@@ -116,7 +134,7 @@ public class TCPSendingClient : MonoBehaviour
     /// </summary> 	
 
 
-    new private void SendMessage(string messagetoSend)
+    private void SendMessage(byte[] messagetoSend)
     {
         if (socketConnection == null)
         {
@@ -129,12 +147,10 @@ public class TCPSendingClient : MonoBehaviour
             NetworkStream stream = socketConnection.GetStream();
             if (stream.CanWrite)
             {
-                Debug.Log("jsonlengthLenth: " + messagetoSend.Length);
-                byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(messagetoSend);
+                
                 // Write byte array to socketConnection stream.   
-                Debug.Log("serverSendMessageLenth: " + serverMessageAsByteArray.Length);
-                stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);
-                Debug.Log("Server sent his message - should be received by client");
+                stream.Write(messagetoSend, 0, messagetoSend.Length);
+                
             }
         }
         catch (SocketException socketException)
@@ -157,45 +173,49 @@ public class TCPSendingClient : MonoBehaviour
         {
 
             BinaryFormatter formatter = new BinaryFormatter();
-
             using (MemoryStream stream = new MemoryStream())
             {
 
                 try
                 {
                     formatter.Serialize(stream, e);
-
                     try
                     {
-
                         byte[] dat = stream.ToArray();
-
                         dmxZwischenspeicherUniverse0 = new byte[dat.Length];
                         dat.CopyTo(dmxZwischenspeicherUniverse0, 0);
-
                     }
                     catch (Exception hhhj) { print(hhhj); }
-                    //Debug.Log(e);
-
 
                 }
-                catch (SerializationException hhe)
-                {
-                    Debug.Log("Serialization Failed : " + hhe.Message);
-                }
+                catch (SerializationException hhe){ Debug.Log("Serialization Failed : " + hhe.Message);}
             }
 
         }
         else if (e.Universe == 1)
         {
-            string dat = JsonUtility.ToJson(e);
-            //Debug.Log(e);
-            dmxZwischenspeicherUniverse1 = dat;
-            Debug.LogWarning("stringArray: " + dat.Length);
+            BinaryFormatter formatter = new BinaryFormatter();
+            using (MemoryStream stream = new MemoryStream())
+            {
+
+                try
+                {
+                    formatter.Serialize(stream, e);
+                    try
+                    {
+                        byte[] dat = stream.ToArray();
+                        dmxZwischenspeicherUniverse1 = new byte[dat.Length];
+                        dat.CopyTo(dmxZwischenspeicherUniverse1, 0);
+                    }
+                    catch (Exception hhhj) { print(hhhj); }
+
+                }
+                catch (SerializationException hhe) { Debug.Log("Serialization Failed : " + hhe.Message); }
+            }
         }
         else
         {
-            Debug.Log("this packet has univese: " + e.Universe + " and will not be send");
+            Debug.LogWarning("this packet has univese: " + e.Universe + " and will not be send");
         }
 
 

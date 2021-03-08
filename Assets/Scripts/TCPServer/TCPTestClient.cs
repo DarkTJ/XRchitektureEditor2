@@ -129,7 +129,7 @@ public class TCPTestClient : MonoBehaviour
         {
 
             //this should not be happening but just in case we just start the single player!
-            //Debug.Log("On client connect exception " + e);
+            Debug.Log("On client connect exception " + e);
 
             startSinglePlayerbool = true;
             Debug.Log("Starting Singleplayer, no Server found");
@@ -202,7 +202,7 @@ public class TCPTestClient : MonoBehaviour
         }
         catch (SocketException socketException)
         {
-            //Debug.Log("Socket exception: " + socketException);
+            Debug.Log("Socket exception: " + socketException);
             startSinglePlayerbool = true ;
             serverConnetion = false;
             Debug.Log("ServerConnection False");

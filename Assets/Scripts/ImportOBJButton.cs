@@ -13,6 +13,7 @@ public class ImportOBJButton : MonoBehaviour
     GameObject loadedObject;
     public bool showImporter = false;
     public GameObject uIEventSystem;
+    public Transform SpawnPoint;
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +46,7 @@ public class ImportOBJButton : MonoBehaviour
             if (loadedObject != null)
                 Destroy(loadedObject);
             loadedObject = new OBJLoader().Load(objPath);
+            loadedObject.transform.SetParent(SpawnPoint);
             error = string.Empty;
             showImporter = false;
         }

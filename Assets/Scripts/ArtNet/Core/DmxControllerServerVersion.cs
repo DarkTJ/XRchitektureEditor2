@@ -177,25 +177,54 @@ public class DmxControllerServerVersion : MonoBehaviour
         return address;
     }
 
+    /*[System.Serializable]
+   public class UniverseDevices
+   {
+       public string universeName;
+       public int universe;
+       public DMXDevice[] devices;
+
+       public void Initialize()
+       {
+           var startChannel = 0;
+           foreach (var d in devices)
+               if (d != null)
+               {
+                   d.startChannel = startChannel;
+                   startChannel += d.NumChannels;
+                   d.name = string.Format("{0}:({1},{2:d3}-{3:d3})", d.GetType().ToString(), universe, d.startChannel, startChannel - 1);
+               }
+           if (512 < startChannel)
+               Debug.LogErrorFormat("The number({0}) of channels of the universe {1} exceeds the upper limit(512 channels)!", startChannel, universe);
+       }
+   }*/
+
+    //AN VALIDATE FUNKTION DENKEN
+
     [System.Serializable]
     public class UniverseDevices
     {
         public string universeName;
         public int universe;
         public DMXDevice[] devices;
+        public GameObject[] dmxDevicesSearch;
 
         public void Initialize()
         {
+            dmxDevicesSearch = GameObject.FindGameObjectsWithTag("DMX");
+
+            int x = 0;
             var startChannel = 0;
-            foreach (var d in devices)
-                if (d != null)
-                {
-                    d.startChannel = startChannel;
-                    startChannel += d.NumChannels;
-                    d.name = string.Format("{0}:({1},{2:d3}-{3:d3})", d.GetType().ToString(), universe, d.startChannel, startChannel - 1);
-                }
-            if (512 < startChannel)
-                Debug.LogErrorFormat("The number({0}) of channels of the universe {1} exceeds the upper limit(512 channels)!", startChannel, universe);
+            //check for desired dmx channel !
+            foreach (GameObject g in dmxDevicesSearch)
+            {
+                DMXDevice d = g.GetComponent<DMXDevice>();
+                devices[x] = d;
+                d.startChannel = startChannel;
+                startChannel += d.NumChannels;
+                d.name = string.Format("{0}:({1},{2:d3}-{3:d3})", d.GetType().ToString(), universe, d.startChannel, startChannel - 1);
+                x++;
+            }
         }
     }
 }
