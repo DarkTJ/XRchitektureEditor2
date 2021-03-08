@@ -22,7 +22,7 @@ public class ArtNetPlayer : MonoBehaviour
     //
     //public StudioEventEmitter[] track;
 
-    public DmxController dmxcontroller;
+    public DmxControllerServerVersion dmxcontroller;
 
     public bool playingMusic = false;
     public bool playing = false;

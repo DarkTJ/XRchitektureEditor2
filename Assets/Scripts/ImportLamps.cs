@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class ImportLamps : MonoBehaviour
 {
     public GameObject Menue;
+
+    
     void Start()
     {
         Button btn = this.GetComponent<Button>();
@@ -20,6 +22,13 @@ public class ImportLamps : MonoBehaviour
 
     void OpenLampSelection()
     {
-        Menue.SetActive(true);
+        if (Menue.active == false)
+        {
+            Menue.SetActive(true);
+        }else
+        {
+            Menue.SetActive(false);
+        }
+        
     }
 }

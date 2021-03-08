@@ -26,16 +26,17 @@ public class ListCreator : MonoBehaviour
 
         //setContent Holder Height;
         content.sizeDelta = new Vector2(0, numberOfItems * 60);
-        int spawnRow = 0;
+        int spawnRow = -1;
 
         for (int i = 0; i < numberOfItems; i++)
         {
+            if (i % 3 == 0) { spawnRow += 1; }
             // 60 width of item
-            float spawnY = i *spawnRow* 200;
+            float spawnY = spawnRow * 200;
             float spawnX = i % 3 * 200;
             //newSpawn Position
-            Vector3 pos = new Vector3(SpawnPoint.position.x +spawnX, -spawnY, SpawnPoint.position.z);
-            Debug.Log(pos);
+            Vector3 pos = new Vector3(SpawnPoint.position.x + spawnX, -spawnY, SpawnPoint.position.z);
+            
             //instantiate item
             GameObject SpawnedItem = Instantiate(lamp, pos, SpawnPoint.rotation);
             //setParent
@@ -45,9 +46,13 @@ public class ListCreator : MonoBehaviour
             //set name
             itemDetails.text.text = lampNames[i];
             //set image
-            itemDetails.image.sprite = lampImages[i];
+            if (lampImages[i] != null)
+            {
+                itemDetails.image.sprite = lampImages[i];
+            }
+            
 
-            //if (i%3 == 0) { spawnRow += 1; }
+            
 
 
         }

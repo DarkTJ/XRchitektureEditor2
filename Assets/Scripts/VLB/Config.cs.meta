@@ -1,10 +1,14 @@
 fileFormatVersion: 2
 guid: fed3f3d91454db34f894abc9ea1d8ec4
-timeCreated: 1508325517
-licenseType: Store
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - beamShader1Pass: {instanceID: 0}
+  - beamShader2Pass: {instanceID: 0}
+  - beamShaderSRP: {instanceID: 0}
+  - noise3DData: {fileID: 4900000, guid: a09c5d7e80c6d0244bdf3f4c40b2e6ae, type: 3}
+  - dustParticlesPrefab: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

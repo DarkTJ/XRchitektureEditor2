@@ -4,6 +4,7 @@ using ArtNet.IO;
 
 namespace ArtNet.Packets
 {
+    [System.Serializable]
     public class ArtNetPacket
     {
         public ArtNetPacket(ArtNetOpCodes opCode)

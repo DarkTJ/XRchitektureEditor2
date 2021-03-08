@@ -8,6 +8,8 @@ public class D3Camera : MonoBehaviour
     public Transform CameraBase;
     public Transform Camera;
 
+    public bool disableScroll = false;
+
     public int MaxTilt = 85;
     public int MinTilt = 10;
     Vector3 prev_Mousepostition = new Vector3(0, 0, 0);
@@ -68,13 +70,17 @@ public class D3Camera : MonoBehaviour
 
 
         //Zoom
-        if (Input.mouseScrollDelta != new Vector2 (0,0))
+        if (disableScroll == false)
         {
-            Vector3 oldPosition = Camera.localPosition;
-            oldPosition[2] += Input.mouseScrollDelta[1];
-            Camera.localPosition = oldPosition;
+            if (Input.mouseScrollDelta != new Vector2(0, 0))
+            {
+                Vector3 oldPosition = Camera.localPosition;
+                oldPosition[2] += Input.mouseScrollDelta[1];
+                Camera.localPosition = oldPosition;
 
+            }
         }
+        
     }
 
 

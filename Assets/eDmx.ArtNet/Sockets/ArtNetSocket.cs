@@ -95,7 +95,7 @@ namespace ArtNet.Sockets
                 EndPoint localPort = new IPEndPoint(IPAddress.Any, Port);
                 ArtNetRecieveData recieveState = new ArtNetRecieveData();
                 BeginReceiveFrom(recieveState.buffer, 0, recieveState.bufferSize, SocketFlags.None, ref localPort, new AsyncCallback(OnRecieve), recieveState);
-                Debug.Log("BeginRecieve wird getan");
+                
             }
             catch (Exception ex)
             {
@@ -106,10 +106,10 @@ namespace ArtNet.Sockets
         private void OnRecieve(IAsyncResult state)
         {
             EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            Debug.Log("OnRecieve");
+            
             if (PortOpen)
             {
-                Debug.Log("Port ist oopen");
+                
                 try
                 {
                     ArtNetRecieveData recieveState = (ArtNetRecieveData)(state.AsyncState);
