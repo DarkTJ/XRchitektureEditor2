@@ -178,7 +178,7 @@ public class TCPTestClient : MonoBehaviour
                             }
                             catch (ArgumentException argumentExeption)
                             {
-                                //Debug.Log("cathced JSON EXEPTION AGAIN *facepalm* : " + argumentExeption);
+                                Debug.Log("cathced JSON EXEPTION AGAIN *facepalm* : " + argumentExeption);
                             }
 
                             messagesave = "";

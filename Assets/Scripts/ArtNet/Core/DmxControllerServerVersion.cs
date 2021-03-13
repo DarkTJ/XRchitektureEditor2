@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using System.Linq;
@@ -143,7 +144,7 @@ public class DmxControllerServerVersion : MonoBehaviour
 
             var universeDevices = universes.Where(u => u.universe == universe).FirstOrDefault();
             if (universeDevices != null)
-                foreach (var d in universeDevices.devices)
+                foreach (DMXDevice d in universeDevices.devices)
                     d.SetData(dmxData.Skip(d.startChannel).Take(d.NumChannels).ToArray());
 
             dmxDataMap[universe] = null;
@@ -206,20 +207,20 @@ public class DmxControllerServerVersion : MonoBehaviour
     {
         public string universeName;
         public int universe;
-        public DMXDevice[] devices;
+        public ArrayList devices;
         public GameObject[] dmxDevicesSearch;
 
         public void Initialize()
         {
             dmxDevicesSearch = GameObject.FindGameObjectsWithTag("DMX");
-
+            devices = new ArrayList();
             int x = 0;
             var startChannel = 0;
             //check for desired dmx channel !
             foreach (GameObject g in dmxDevicesSearch)
             {
                 DMXDevice d = g.GetComponent<DMXDevice>();
-                devices[x] = d;
+                devices.Add(d);
                 d.startChannel = startChannel;
                 startChannel += d.NumChannels;
                 d.name = string.Format("{0}:({1},{2:d3}-{3:d3})", d.GetType().ToString(), universe, d.startChannel, startChannel - 1);

@@ -6,7 +6,9 @@ public abstract class DMXDevice : MonoBehaviour
 {
     public byte[] dmxData;
     public int startChannel;
+    public bool startChannelSET;
     public abstract int NumChannels { get; }
+
 
     public virtual void SetData(byte[] dmxData)
     {

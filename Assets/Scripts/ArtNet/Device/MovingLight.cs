@@ -16,6 +16,7 @@ public class MovingLight : DMXDevice
     public float tiltMovement = 270f;
     public float panTarget;
     public float tiltTarget;
+    public float beamAngleTarget;
     public float minRotSpeed = 1f;
     public float maxRotSpeed = 200f;
 
@@ -24,6 +25,7 @@ public class MovingLight : DMXDevice
     public float pan;
     public float tilt;
     public float rotSpeed;
+    public float beamAngle;
 
     public GameObject thisObject;
     public VolumetricLightBeam myBeam;
@@ -84,6 +86,7 @@ public class MovingLight : DMXDevice
     private void Update()
     {
         UpdateRotation();
+        UpdateBeam();
     }
 
     void UpdateRotation()
@@ -111,6 +114,18 @@ public class MovingLight : DMXDevice
     void UpdateStrobo()
     {
 
+    }
+
+    void UpdateBeam()
+    {
+        float dAngle = beamAngleTarget - beamAngle;
+        //TODO MAX 50, min 0.1
+        if (dAngle != 0)
+        {
+            dAngle = Mathf.Min(Mathf.Abs(dAngle), Time.deltaTime * rotSpeed) * Mathf.Sign(dAngle);
+            beamAngle += dAngle;
+            myBeam.spotAngle = beamAngle;
+        }
     }
     void SetColor(byte r,byte g, byte b,byte a)
     {
