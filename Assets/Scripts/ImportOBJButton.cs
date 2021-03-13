@@ -14,6 +14,7 @@ public class ImportOBJButton : MonoBehaviour
     public bool showImporter = false;
     public GameObject uIEventSystem;
     public Transform SpawnPoint;
+    public LevelDataSaver LevelDataSaver;
 
     // Start is called before the first frame update
     void Start()
@@ -49,6 +50,10 @@ public class ImportOBJButton : MonoBehaviour
             loadedObject.transform.SetParent(SpawnPoint);
             error = string.Empty;
             showImporter = false;
+
+            //send whats loaded to the LevelDataSaver
+            LevelDataSaver.loadedOBJPath = objPath;
+            LevelDataSaver.loadedObj = loadedObject;
         }
     }
 

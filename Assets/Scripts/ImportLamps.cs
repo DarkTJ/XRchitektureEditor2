@@ -22,7 +22,7 @@ public class ImportLamps : MonoBehaviour
 
     void OpenLampSelection()
     {
-        if (Menue.active == false)
+        if (Menue.activeSelf == false)
         {
             Menue.SetActive(true);
         }else

@@ -86,7 +86,7 @@ public class TCPTestClient : MonoBehaviour
                 }
                 catch (ArgumentException argumentExeption)
                 {
-                    //Debug.Log("cathced JSON EXEPTION AGAIN *facepalm* AND THIS ONE WAS CORRECTED : " + argumentExeption);
+                    Debug.Log("cathced JSON EXEPTION AGAIN *facepalm* AND THIS ONE WAS CORRECTED : " + argumentExeption);
                 }
                 //Debug.Log("lol" + messagesave);
                 messagesave = messagesave.Remove(0, messagesave.IndexOf("}") + 1);
@@ -233,7 +233,7 @@ public class TCPTestClient : MonoBehaviour
         }
         catch (SocketException socketException)
         {
-            //Debug.Log("Socket exception: " + socketException);
+            Debug.Log("Socket exception: " + socketException);
         }
     }
 
