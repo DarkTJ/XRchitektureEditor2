@@ -106,10 +106,15 @@ public class LevelDataSaver : MonoBehaviour
 
         //move to path and rename
         File.Copy(loadedOBJPath, location + "/toBeLoaded.obj", true);
-        if (loadedmtlPath != "0")
+        //get the location and File name to find the mtl
+        string[]splitpath = loadedOBJPath.Split('/');
+        string mtlName = splitpath[splitpath.Length-1].Split('.')[0] + ".mtl";
+        if (File.Exists(mtlName))
         {
-            File.Copy(loadedmtlPath, location + "/toBeLoaded.mtl", true);
+            File.Copy(mtlName, location + "/toBeLoaded.mtl", true);
+            Debug.Log("Found mtl!");
         }
+        Debug.LogWarning("Found no mtl!");
 
 
         //save as Json to FilePath
