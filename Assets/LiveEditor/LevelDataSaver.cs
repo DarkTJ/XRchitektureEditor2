@@ -113,8 +113,8 @@ public class LevelDataSaver : MonoBehaviour
         {
             File.Copy(mtlName, location + "/toBeLoaded.mtl", true);
             Debug.Log("Found mtl!");
-        }
-        Debug.LogWarning("Found no mtl!");
+        } else { Debug.LogWarning("Found no mtl!"); }
+        
 
 
         //save as Json to FilePath
