@@ -104,24 +104,48 @@ public class LevelDataSaver : MonoBehaviour
         sO.objRotation = loadedObj.transform.rotation;
         sO.objScale = loadedObj.transform.localScale;
 
-        //move to path and rename
-        File.Copy(loadedOBJPath, location + "/toBeLoaded.obj", true);
-        //get the location and File name to find the mtl
-        string[]splitpath = loadedOBJPath.Split('/');
-        string mtlName = splitpath[splitpath.Length-1].Split('.')[0] + ".mtl";
-        if (File.Exists(mtlName))
-        {
-            File.Copy(mtlName, location + "/toBeLoaded.mtl", true);
-            Debug.Log("Found mtl!");
-        } else { Debug.LogWarning("Found no mtl!"); }
+
+
+        //save as Json to tempFilePath
         
 
-
-        //save as Json to FilePath
-        if (location == null) { location = Application.persistentDataPath + "/" + sO.saveName + ".json"; } else { location = location + "/" + sO.saveName + ".json"; }
-
         string json = JsonUtility.ToJson(sO);
-        File.WriteAllText(location, json);
+        File.WriteAllText(Application.persistentDataPath + "/save.json", json);
+
+        //move to path and rename
+        File.Copy(loadedOBJPath, Application.persistentDataPath + "/toBeLoaded.obj", true);
+        //get the location and File name to find the mtl
+        string[] splitpath = loadedOBJPath.Split('/');
+        string mtlName = splitpath[splitpath.Length - 1].Split('.')[0] + ".mtl";
+        if (File.Exists(mtlName))
+        {
+            File.Copy(mtlName, Application.persistentDataPath + "/toBeLoaded.mtl", true);
+            Debug.Log("Found mtl!");
+        }
+        else { Debug.LogWarning("Found no mtl!"); mtlName = null; }
+
+        //make saveFile !!!
+
+
+        //location == SaveLevelTo to location
+        if (location == null) { location = Application.persistentDataPath + "/" + sO.saveName + ".xrs"; } else { location = location + "/" + sO.saveName + ".xrs"; }
+        var filePackage = new FileManager.FilePackage
+        {
+            FilePath = location,
+            ContentFilePathList = new List<string>
+            {
+                Application.persistentDataPath + "/save.json", Application.persistentDataPath + "/toBeLoaded.obj", Application.persistentDataPath + "/toBeLoaded.mtl"
+            }
+        };
+        var filePackageWriter = new FileManager.FilePackageWriter(filePackage);
+        filePackageWriter.GeneratePackage(true);
+
+
+
+
+
+
+
 
     }
 }
