@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -72,7 +74,8 @@ public class TCPTestClient : MonoBehaviour
         }
 
 
-
+        //saveThe Message
+        /*
         if (messagesave.StartsWith("{"))
         {
             if (messagesave.IndexOf("}") != -1) //starts with {, look for }
@@ -108,7 +111,7 @@ public class TCPTestClient : MonoBehaviour
             }
             
         }
-
+        */
        
 
 
@@ -143,7 +146,7 @@ public class TCPTestClient : MonoBehaviour
         try
         {
             socketConnection = new TcpClient(serverIP, 8886);
-            Byte[] bytes = new Byte[2100];
+            Byte[] bytes = new Byte[887];
             //conection hat geklappt;
             serverConnetion = true;
             while (true)
@@ -162,13 +165,21 @@ public class TCPTestClient : MonoBehaviour
                         
                         var incommingData = new byte[length];
                         Array.Copy(bytes, 0, incommingData, 0, length);
-                        
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        try
+                        {
+                            dart = (ArtNetDmxPacket)formatter.Deserialize(stream);
+                        }
+                        catch (SerializationException e)
+                        {
+                            Debug.LogError(e);
+                        }
                         // Convert byte array to string message. 						
-                        string serverMessage = Encoding.ASCII.GetString(incommingData);
+                        //string serverMessage = Encoding.ASCII.GetString(incommingData);
                         ////Debug.Log(serverMessage);
                         ////Debug.Log(serverMessage[serverMessage.Length - 1] + " " + serverMessage[0]);
                         ////Debug.Log(serverMessage[serverMessage.Length - 1].ToString().Equals("}") + " " + serverMessage[0].ToString().Equals("{"));
-                        if (serverMessage[serverMessage.Length -1].ToString().Equals("}") && serverMessage[0].ToString().Equals("{"))
+                        /*if (serverMessage[serverMessage.Length -1].ToString().Equals("}") && serverMessage[0].ToString().Equals("{"))
                         {
                             try
                             {
@@ -194,7 +205,7 @@ public class TCPTestClient : MonoBehaviour
                             //Debug.Log("messagesave: " + messagesave + " " + messagesave.StartsWith("{") + " " + messagesave.IndexOf("}"));
                         }
                         //change message to ArtNetOPacket and send it to DMX Controller
-
+                        */
                         
                     }
                 }

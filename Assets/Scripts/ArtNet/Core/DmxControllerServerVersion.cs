@@ -86,6 +86,7 @@ public class DmxControllerServerVersion : MonoBehaviour
 
                 //send to tcp server
                 server.ArtNetDatatoSend(packet);
+                server.countrecievedPackages += 1;
 
                 if (packet.DmxData != _dmxData)
                     _dmxData = packet.DmxData;
@@ -227,5 +228,7 @@ public class DmxControllerServerVersion : MonoBehaviour
                 x++;
             }
         }
+
+        
     }
 }

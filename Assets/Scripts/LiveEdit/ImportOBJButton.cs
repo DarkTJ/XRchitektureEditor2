@@ -54,6 +54,9 @@ public class ImportOBJButton : MonoBehaviour
             //send whats loaded to the LevelDataSaver
             LevelDataSaver.loadedOBJPath = objPath;
             LevelDataSaver.loadedObj = loadedObject;
+
+            //TODO FIX !!! NOT MTL IS PACKED AT THE MOMENT!
+            LevelDataSaver.loadedmtl = false;
         }
     }
 

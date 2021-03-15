@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 using ArtNet.Packets;
+using UnityEngine.UI;
+using TMPro;
 
 public class TCPSendingClient : MonoBehaviour
 {
@@ -22,17 +24,61 @@ public class TCPSendingClient : MonoBehaviour
     public int paketeProSekunde = 10;
     public byte[] dmxZwischenspeicherUniverse0;
     public byte[] dmxZwischenspeicherUniverse1;
+    private byte[] lastdmxZwischenspeicherUniverse0;
+    private byte[] lastdmxZwischenspeicherUniverse1;
 
     public DmxControllerServerVersion dmxcontroller;
+
+
+    public string serverStatusString = "not connected";
+    public Color serverStatusColor = Color.red;
+    public string PacketCoutnString;
+    public TextMeshProUGUI ServerStatus;
+    public TextMeshProUGUI PacketCount;
+    private long countsendPackages = 0;
+    public long countrecievedPackages = 0;
+
+    void ServerStatusTextSet(string e, bool c)
+    {
+
+        if (c == false)
+        {
+            //ServerStatus.fontSize = 25;
+            serverStatusColor = Color.red;
+            serverStatusString = "Error connecting: " + e;
+        } else
+        {
+            //ServerStatus.fontSize = 36;
+            serverStatusColor = Color.green;
+            serverStatusString = "Connected:" + e;
+        }
+        
+    }
     // Use this for initialization 	
     void Start()
     {
-        ConnectToTcpServer();
+        
     }
     // Update is called once per frame
     void Update()
     {
+        if (ServerStatus.text != serverStatusString) {
+            ServerStatus.text = serverStatusString;
+            ServerStatus.color = serverStatusColor;
+        }
 
+        PacketCoutnString = countsendPackages + "/" + countrecievedPackages;
+        if (PacketCount.text != PacketCoutnString)
+        {
+            PacketCount.text = PacketCoutnString;
+        }
+        
+    }
+
+    public void connectToArtNetServer(string IP)
+    {
+        serverIP = IP;
+        ConnectToTcpServer();
     }
     /// <summary> 	
     /// Setup socket connection. 	
@@ -44,11 +90,13 @@ public class TCPSendingClient : MonoBehaviour
             clientReceiveThread = new Thread(new ThreadStart(ListenForData));
             clientReceiveThread.IsBackground = true;
             clientReceiveThread.Start();
+
             InvokeRepeating("SendArtNet", 2.0f, 1.0f / paketeProSekunde);
         }
         catch (Exception e)
         {
-            Debug.Log("On client connect exception " + e);
+            //Debug.Log("On client connect exception " + e);
+            ServerStatusTextSet(e.ToString(), false);
         }
     }
 
@@ -62,14 +110,24 @@ public class TCPSendingClient : MonoBehaviour
        if (socketConnection != null)
         {
             //TODO: Only send if there is a change !
-            if (dmxZwischenspeicherUniverse0.Length != 0)
+            if (dmxZwischenspeicherUniverse0.Length != 0 && !dmxZwischenspeicherUniverse0.Equals(lastdmxZwischenspeicherUniverse0))
             {
                 SendMessage(dmxZwischenspeicherUniverse0);
+                //lastdmxZwischenspeicherUniverse0 = new byte[dmxZwischenspeicherUniverse0.Length];
+               // Array.Copy(dmxZwischenspeicherUniverse0, lastdmxZwischenspeicherUniverse0, dmxZwischenspeicherUniverse0.Length);
+                
+                //dmxZwischenspeicherUniverse0.CopyTo(lastdmxZwischenspeicherUniverse0,0);
+                countsendPackages += 1;
             }
 
-            if (dmxZwischenspeicherUniverse1.Length != 0)
+            if (dmxZwischenspeicherUniverse1.Length != 0 && !dmxZwischenspeicherUniverse1.Equals(lastdmxZwischenspeicherUniverse1))
             {
                 SendMessage(dmxZwischenspeicherUniverse1);
+                //lastdmxZwischenspeicherUniverse1 = new byte[dmxZwischenspeicherUniverse1.Length];
+                //dmxZwischenspeicherUniverse1.CopyTo(lastdmxZwischenspeicherUniverse1, 0);
+
+                
+                countsendPackages += 1;
             }
         }
 
@@ -78,13 +136,17 @@ public class TCPSendingClient : MonoBehaviour
     }
     /// <summary> 
     /// Runs in background clientReceiveThread; Listens for incomming data. 	
-    /// </summary>     
+    /// </summary>   
+    /// 
+    //Server listens to data but ignores it for now
     private void ListenForData()
     {
         try
         {
+            Debug.LogWarning(" ." + serverIP + ". .");
             socketConnection = new TcpClient(serverIP, 8886);
             Byte[] bytes = new Byte[2100];
+            ServerStatusTextSet("Connected", true);
             while (true)
             {
                 // Get a stream object for reading 				
@@ -94,10 +156,6 @@ public class TCPSendingClient : MonoBehaviour
                     // Read incomming stream into byte arrary. 					
                     while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
-
-
-
-
 
                         var incommingData = new byte[length];
                         Array.Copy(bytes, 0, incommingData, 0, length);
@@ -126,7 +184,8 @@ public class TCPSendingClient : MonoBehaviour
         }
         catch (SocketException socketException)
         {
-            Debug.Log("Socket exception: " + socketException);
+            ServerStatusTextSet(socketException.ToString(), false);
+            //Debug.Log("Socket exception: " + socketException);
         }
     }
     /// <summary> 	
@@ -139,6 +198,7 @@ public class TCPSendingClient : MonoBehaviour
         if (socketConnection == null)
         {
             Debug.Log("no connection, but tryid it ....");
+            ServerStatusTextSet("lost connection", false);
             return;
         }
         try
@@ -151,10 +211,12 @@ public class TCPSendingClient : MonoBehaviour
                 // Write byte array to socketConnection stream.   
                 stream.Write(messagetoSend, 0, messagetoSend.Length);
                 
+                
             }
         }
         catch (SocketException socketException)
         {
+            ServerStatusTextSet(socketException.ToString(), false) ;
             Debug.Log("Socket exception: " + socketException);
         }
     }
@@ -178,12 +240,19 @@ public class TCPSendingClient : MonoBehaviour
 
                 try
                 {
+                    
                     formatter.Serialize(stream, e);
                     try
                     {
                         byte[] dat = stream.ToArray();
+                        Debug.LogWarning(dat[0].ToString());
                         dmxZwischenspeicherUniverse0 = new byte[dat.Length];
-                        dat.CopyTo(dmxZwischenspeicherUniverse0, 0);
+                        dmxZwischenspeicherUniverse0 = (byte[])dat.Clone();
+                        //Array.Copy(dat, dmxZwischenspeicherUniverse0, dat.Length);
+                        //dat.CopyTo(dmxZwischenspeicherUniverse0, 0);
+
+                        Debug.Log(dmxZwischenspeicherUniverse0[0].ToString());
+                        Debug.Log(dat.Equals(dmxZwischenspeicherUniverse0));
                     }
                     catch (Exception hhhj) { print(hhhj); }
 

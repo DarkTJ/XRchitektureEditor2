@@ -130,16 +130,36 @@ public class LevelDataSaver : MonoBehaviour
 
         //location == SaveLevelTo to location
         if (location == null) { location = Application.persistentDataPath + "/" + sO.saveName + ".xrs"; } else { location = location + "/" + sO.saveName + ".xrs"; }
-        var filePackage = new FileManager.FilePackage
-        {
-            FilePath = location,
-            ContentFilePathList = new List<string>
+        
+        
+        
+        if (loadedmtl == true) {
+            var filePackage = new FileManager.FilePackage
             {
-                Application.persistentDataPath + "/save.json", Application.persistentDataPath + "/toBeLoaded.obj", Application.persistentDataPath + "/toBeLoaded.mtl"
+                FilePath = location,
+                ContentFilePathList = new List<string>
+            {
+                Application.persistentDataPath + "/save.json", Application.persistentDataPath + "/toBeLoaded.obj" ,Application.persistentDataPath + "/toBeLoaded.mtl"
             }
-        };
-        var filePackageWriter = new FileManager.FilePackageWriter(filePackage);
-        filePackageWriter.GeneratePackage(true);
+            };
+            var filePackageWriter = new FileManager.FilePackageWriter(filePackage);
+            filePackageWriter.GeneratePackage(true);
+        } 
+        else
+        {
+            var filePackage = new FileManager.FilePackage
+            {
+                FilePath = location,
+                ContentFilePathList = new List<string>
+            {
+                Application.persistentDataPath + "/save.json", Application.persistentDataPath + "/toBeLoaded.obj"
+            }
+            };
+            var filePackageWriter = new FileManager.FilePackageWriter(filePackage);
+            filePackageWriter.GeneratePackage(true);
+        }
+        
+        
 
 
 

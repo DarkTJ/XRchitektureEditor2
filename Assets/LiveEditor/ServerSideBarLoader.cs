@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using SimpleFileBrowser;
+using TMPro;
 
 public class ServerSideBarLoader : MonoBehaviour
 {
-
+    public Button connectToServerButton;
+    public TMP_InputField ipInput;
+    public TCPSendingClient sendingClient;
     public Button saveToFileButton;
     public Button loadFromFileButton;
     public GameObject uIEventSystem;
@@ -19,6 +22,7 @@ public class ServerSideBarLoader : MonoBehaviour
     {
         saveToFileButton.onClick.AddListener(SaveToFilePress);
         loadFromFileButton.onClick.AddListener(LoadFromFilePress);
+        connectToServerButton.onClick.AddListener(connectToServerFromButtonpress);
     }
 
     // Update is called once per frame
@@ -42,5 +46,10 @@ public class ServerSideBarLoader : MonoBehaviour
         //open file explorer in folder select#+
         uIEventSystem.SetActive(false);
         FileBrowser.ShowLoadDialog((paths) => { uIEventSystem.SetActive(true); loader.LoadLevelfromFile(paths[0]); }, () => { Debug.Log("Error"); }, FileBrowser.PickMode.Files, false, null, null, "Select .obj", "Load");
+    }
+
+    private void connectToServerFromButtonpress()
+    {
+        sendingClient.connectToArtNetServer(ipInput.text);
     }
 }
