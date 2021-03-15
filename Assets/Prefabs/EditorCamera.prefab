@@ -92,7 +92,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1332179545070103309}
-  - component: {fileID: 1332179545070103308}
+  - component: {fileID: 1318349081352643173}
   m_Layer: 0
   m_Name: EditorCamera
   m_TagString: Untagged
@@ -115,7 +115,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 10, y: 0, z: 0}
---- !u!114 &1332179545070103308
+--- !u!114 &1318349081352643173
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -124,10 +124,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1332179545070103307}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d44929e733b57245b67feb3f7b3dc97, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ca69241ed7352640815d27d72a6da18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CameraBase: {fileID: 1332179545070103309}
   Camera: {fileID: 1332179543873743307}
+  disableScroll: 0
   MaxTilt: 85
   MinTilt: 10

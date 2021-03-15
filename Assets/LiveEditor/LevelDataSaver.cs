@@ -10,6 +10,7 @@ public class LevelDataSaver : MonoBehaviour
     public string loadedOBJPath;
     public string loadedmtlPath;
     public GameObject loadedObj;
+    public bool loadedmtl;
 
 
 
