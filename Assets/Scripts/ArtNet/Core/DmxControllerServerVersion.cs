@@ -57,6 +57,12 @@ public class DmxControllerServerVersion : MonoBehaviour
             u.Initialize();
     }
 
+    public void ValidateAllDMXDAta()
+    {
+        foreach (var u in universes)
+            u.Initialize();
+    }
+
     public bool newPacket;
     void Start()
     {
@@ -86,7 +92,7 @@ public class DmxControllerServerVersion : MonoBehaviour
 
                 //send to tcp server
                 server.ArtNetDatatoSend(packet);
-                server.countrecievedPackages += 1;
+                server.countrecievedPackages +=1;
 
                 if (packet.DmxData != _dmxData)
                     _dmxData = packet.DmxData;
@@ -208,20 +214,21 @@ public class DmxControllerServerVersion : MonoBehaviour
     {
         public string universeName;
         public int universe;
-        public ArrayList devices;
+        public DMXDevice[] devices;
         public GameObject[] dmxDevicesSearch;
 
         public void Initialize()
         {
             dmxDevicesSearch = GameObject.FindGameObjectsWithTag("DMX");
-            devices = new ArrayList();
+            devices = new DMXDevice[dmxDevicesSearch.Length];
+            //devices = new ArrayList();
             int x = 0;
             var startChannel = 0;
             //check for desired dmx channel !
             foreach (GameObject g in dmxDevicesSearch)
             {
                 DMXDevice d = g.GetComponent<DMXDevice>();
-                devices.Add(d);
+                devices[x] =d;
                 d.startChannel = startChannel;
                 startChannel += d.NumChannels;
                 d.name = string.Format("{0}:({1},{2:d3}-{3:d3})", d.GetType().ToString(), universe, d.startChannel, startChannel - 1);

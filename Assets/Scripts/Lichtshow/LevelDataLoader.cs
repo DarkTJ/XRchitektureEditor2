@@ -14,6 +14,8 @@ public class LevelDataLoader : MonoBehaviour
     public GameObject lampPreset;
     public GameObject copyLightPreset;
 
+    public DmxControllerServerVersion dmxController;
+
 
     public void LoadLevelfromFile(string location)
     {
@@ -111,7 +113,9 @@ public class LevelDataLoader : MonoBehaviour
         loadedObject.transform.position = sO.objPosition;
         loadedObject.transform.rotation = sO.objRotation;
         loadedObject.transform.localScale = sO.objScale;
-        
+
+
+        dmxController.ValidateAllDMXDAta();
     }
 
     public static Stream GenerateStreamFromString(string s)

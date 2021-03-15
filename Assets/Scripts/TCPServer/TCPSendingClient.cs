@@ -22,8 +22,8 @@ public class TCPSendingClient : MonoBehaviour
 
     public string serverIP = "localhost";
     public int paketeProSekunde = 10;
-    public byte[] dmxZwischenspeicherUniverse0;
-    public byte[] dmxZwischenspeicherUniverse1;
+    public string dmxZwischenspeicherUniverse0;
+    public string dmxZwischenspeicherUniverse1;
     private byte[] lastdmxZwischenspeicherUniverse0;
     private byte[] lastdmxZwischenspeicherUniverse1;
 
@@ -46,23 +46,25 @@ public class TCPSendingClient : MonoBehaviour
             //ServerStatus.fontSize = 25;
             serverStatusColor = Color.red;
             serverStatusString = "Error connecting: " + e;
-        } else
+        }
+        else
         {
             //ServerStatus.fontSize = 36;
             serverStatusColor = Color.green;
             serverStatusString = "Connected:" + e;
         }
-        
+
     }
     // Use this for initialization 	
     void Start()
     {
-        
+
     }
     // Update is called once per frame
     void Update()
     {
-        if (ServerStatus.text != serverStatusString) {
+        if (ServerStatus.text != serverStatusString)
+        {
             ServerStatus.text = serverStatusString;
             ServerStatus.color = serverStatusColor;
         }
@@ -72,7 +74,7 @@ public class TCPSendingClient : MonoBehaviour
         {
             PacketCount.text = PacketCoutnString;
         }
-        
+
     }
 
     public void connectToArtNetServer(string IP)
@@ -107,31 +109,31 @@ public class TCPSendingClient : MonoBehaviour
 
 
         //only Send if there is soemthing to send!
-       if (socketConnection != null)
+        if (socketConnection != null)
         {
             //TODO: Only send if there is a change !
             if (dmxZwischenspeicherUniverse0.Length != 0 && !dmxZwischenspeicherUniverse0.Equals(lastdmxZwischenspeicherUniverse0))
             {
-                SendMessage(dmxZwischenspeicherUniverse0);
+                SendMessageTOServer(dmxZwischenspeicherUniverse0);
                 //lastdmxZwischenspeicherUniverse0 = new byte[dmxZwischenspeicherUniverse0.Length];
-               // Array.Copy(dmxZwischenspeicherUniverse0, lastdmxZwischenspeicherUniverse0, dmxZwischenspeicherUniverse0.Length);
-                
+                // Array.Copy(dmxZwischenspeicherUniverse0, lastdmxZwischenspeicherUniverse0, dmxZwischenspeicherUniverse0.Length);
+
                 //dmxZwischenspeicherUniverse0.CopyTo(lastdmxZwischenspeicherUniverse0,0);
                 countsendPackages += 1;
             }
 
             if (dmxZwischenspeicherUniverse1.Length != 0 && !dmxZwischenspeicherUniverse1.Equals(lastdmxZwischenspeicherUniverse1))
             {
-                SendMessage(dmxZwischenspeicherUniverse1);
+                SendMessageTOServer(dmxZwischenspeicherUniverse1);
                 //lastdmxZwischenspeicherUniverse1 = new byte[dmxZwischenspeicherUniverse1.Length];
                 //dmxZwischenspeicherUniverse1.CopyTo(lastdmxZwischenspeicherUniverse1, 0);
 
-                
+
                 countsendPackages += 1;
             }
         }
 
-        
+
 
     }
     /// <summary> 
@@ -193,7 +195,7 @@ public class TCPSendingClient : MonoBehaviour
     /// </summary> 	
 
 
-    private void SendMessage(byte[] messagetoSend)
+    private void SendMessageTOServer(string messagetoSend)
     {
         if (socketConnection == null)
         {
@@ -207,16 +209,16 @@ public class TCPSendingClient : MonoBehaviour
             NetworkStream stream = socketConnection.GetStream();
             if (stream.CanWrite)
             {
-                
+                byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(messagetoSend);
                 // Write byte array to socketConnection stream.   
-                stream.Write(messagetoSend, 0, messagetoSend.Length);
-                
-                
+                stream.Write(serverMessageAsByteArray, 0, messagetoSend.Length);
+
+
             }
         }
         catch (SocketException socketException)
         {
-            ServerStatusTextSet(socketException.ToString(), false) ;
+            ServerStatusTextSet(socketException.ToString(), false);
             Debug.Log("Socket exception: " + socketException);
         }
     }
@@ -230,43 +232,58 @@ public class TCPSendingClient : MonoBehaviour
     public void ArtNetDatatoSend(ArtNetDmxPacket e)
     {
 
-
+        if (e.Universe == 0)
+        {
+            string dat = JsonUtility.ToJson(e);
+            //Debug.Log(e);
+            dmxZwischenspeicherUniverse0 = dat;
+        }
+        else if (e.Universe == 1)
+        {
+            string dat = JsonUtility.ToJson(e);
+            //Debug.Log(e);
+            dmxZwischenspeicherUniverse1 = dat;
+        }
+        else
+        {
+            Debug.Log("this packet has univese: " + e.Universe + " and will not be send");
+        }
+        /*
         if (e.Universe == 0)
         {
 
             BinaryFormatter formatter = new BinaryFormatter();
             using (MemoryStream stream = new MemoryStream())
             {
-
                 try
                 {
-                    
                     formatter.Serialize(stream, e);
                     try
                     {
-                        byte[] dat = stream.ToArray();
-                        Debug.LogWarning(dat[0].ToString());
+                        byte[] dat = new byte[1024];
+                        dat = stream.ToArray();
+                        //Debug.LogWarning(dat[6].ToString());
                         dmxZwischenspeicherUniverse0 = new byte[dat.Length];
                         dmxZwischenspeicherUniverse0 = (byte[])dat.Clone();
                         //Array.Copy(dat, dmxZwischenspeicherUniverse0, dat.Length);
                         //dat.CopyTo(dmxZwischenspeicherUniverse0, 0);
+                        //DeserializeandPrint(dat);
+                        //Debug.Log(dmxZwischenspeicherUniverse0[6].ToString());
+                        //Debug.Log(dat.Equals(dmxZwischenspeicherUniverse0));
 
-                        Debug.Log(dmxZwischenspeicherUniverse0[0].ToString());
-                        Debug.Log(dat.Equals(dmxZwischenspeicherUniverse0));
+                        ArtNetDmxPacket deserializedPacket = (ArtNetDmxPacket)formatter.Deserialize(stream);
+                        Debug.Log(deserializedPacket.DmxData);
                     }
-                    catch (Exception hhhj) { print(hhhj); }
-
+                    catch (Exception e1) { print(e1); }
                 }
-                catch (SerializationException hhe){ Debug.Log("Serialization Failed : " + hhe.Message);}
+                catch (SerializationException hhe) { Debug.Log("Serialization Failed : " + hhe.Message); }
             }
-
         }
         else if (e.Universe == 1)
         {
             BinaryFormatter formatter = new BinaryFormatter();
             using (MemoryStream stream = new MemoryStream())
             {
-
                 try
                 {
                     formatter.Serialize(stream, e);
@@ -277,7 +294,6 @@ public class TCPSendingClient : MonoBehaviour
                         dat.CopyTo(dmxZwischenspeicherUniverse1, 0);
                     }
                     catch (Exception hhhj) { print(hhhj); }
-
                 }
                 catch (SerializationException hhe) { Debug.Log("Serialization Failed : " + hhe.Message); }
             }
@@ -285,8 +301,44 @@ public class TCPSendingClient : MonoBehaviour
         else
         {
             Debug.LogWarning("this packet has univese: " + e.Universe + " and will not be send");
-        }
-
-
+        }*/
     }
+
+    /*void DeserializeandPrint(byte[] bS)
+    {
+        
+        using (MemoryStream stream = new MemoryStream())
+        {
+            Debug.LogWarning(bS[6]);
+            int length;
+            try
+            {
+                length = stream.Read(bS, 0, bS.Length);
+            } catch (Exception e)
+            {
+                length = 0;
+                Debug.LogError(e);
+            }
+            
+            Debug.Log(length);
+            // Read incomming stream into byte arrary. 					
+            while (length != 0)
+            {
+                
+                var incommingData = new byte[length];
+                Array.Copy(bS, 0, incommingData, 0, length);
+                BinaryFormatter formatter = new BinaryFormatter();
+                try
+                {
+                    Debug.Log((ArtNetDmxPacket)formatter.Deserialize(stream));
+                }
+                catch (SerializationException e)
+                {
+                    Debug.LogError(e);
+                }
+
+                length = stream.Read(bS, 0, bS.Length);
+            }
+        }
+    }*/
 }

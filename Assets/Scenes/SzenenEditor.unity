@@ -2164,8 +2164,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1900645157}
   m_HandleRect: {fileID: 1900645156}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 1
+  m_Value: 0
+  m_Size: 0.99856293
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2265,7 +2265,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Send/Recieved Packages:'
+  m_text: 'Sent/Recieved Packages:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3004,6 +3004,7 @@ MonoBehaviour:
   lampSpawnpoint: {fileID: 1182348225}
   lampPreset: {fileID: 1346575770668997738, guid: 6309919d02919024a9aa060fc6b33b03, type: 3}
   copyLightPreset: {fileID: 2544725407930619025, guid: 3196f7f816392b044b7b17d7624ea196, type: 3}
+  dmxController: {fileID: 1907995264}
 --- !u!1 &979559745
 GameObject:
   m_ObjectHideFlags: 0
@@ -4236,7 +4237,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00011991527}
+  m_AnchoredPosition: {x: 0, y: 0.32439947}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1570675257
@@ -4829,7 +4830,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serverIP: 173.212.192.241
-  paketeProSekunde: 10
+  paketeProSekunde: 30
   dmxZwischenspeicherUniverse0: 
   dmxZwischenspeicherUniverse1: 
   dmxcontroller: {fileID: 1907995264}
@@ -4838,6 +4839,7 @@ MonoBehaviour:
   PacketCoutnString: 
   ServerStatus: {fileID: 1762145654}
   PacketCount: {fileID: 260519180}
+  countrecievedPackages: 0
 --- !u!1 &1900645155
 GameObject:
   m_ObjectHideFlags: 0
@@ -4960,7 +4962,8 @@ MonoBehaviour:
   remoteIP: 192.168.178.138
   universes:
   - universeName: test
-    universe: 1
+    universe: 0
+    devices: []
     dmxDevicesSearch: []
   isServer: 1
   server: {fileID: 1886349853}
