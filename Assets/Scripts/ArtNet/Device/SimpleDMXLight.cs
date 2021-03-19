@@ -6,7 +6,7 @@ using UnityEngine;
 public class SimpleDMXLight : DMXDevice
 {
     new Light light;
-
+    public override LampSave.LampType lType { get { return LampSave.LampType.WASH; } }
     public override int NumChannels{ get { return 4; } }
 
     public override void SetData(byte[] dmxData)

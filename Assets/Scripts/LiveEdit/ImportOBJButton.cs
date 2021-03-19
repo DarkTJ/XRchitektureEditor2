@@ -32,7 +32,7 @@ public class ImportOBJButton : MonoBehaviour
     public void OpenFileBrowser()
     {
         uIEventSystem.SetActive(false);
-        FileBrowser.ShowLoadDialog((paths) => { objPath = paths[0]; uIEventSystem.SetActive(true); ImportObj(); },()  => { Debug.Log("Error"); }, FileBrowser.PickMode.Files,false,null,null,"Select .obj","Load");
+        FileBrowser.ShowLoadDialog((paths) => { objPath = paths[0]; uIEventSystem.SetActive(true); ImportObj(); },()  => { uIEventSystem.SetActive(true); Debug.Log("Error"); }, FileBrowser.PickMode.Files,false,null,null,"Select .obj","Load");
     }
     
     void ImportObj()

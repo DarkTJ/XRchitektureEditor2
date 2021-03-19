@@ -12,6 +12,8 @@ public class LevelDataLoader : MonoBehaviour
     public Transform spawnPoint;
     public Transform lampSpawnpoint;
     public GameObject lampPreset;
+    public GameObject flamePreset;
+    public GameObject clyPreset;
     public GameObject copyLightPreset;
 
     public DmxControllerServerVersion dmxController;
@@ -25,7 +27,7 @@ public class LevelDataLoader : MonoBehaviour
         //unpack the File:
         var filePackageReader = new FileManager.FilePackageReader(location);
         var filenameFileContentDictionary = filePackageReader.GetFilenameFileContentDictionary();
-
+        
         foreach (var keyValuePair in filenameFileContentDictionary)
         {
             if (keyValuePair.Key == "save.json")
@@ -59,7 +61,30 @@ public class LevelDataLoader : MonoBehaviour
         //Lamps first:
         foreach (LampSave s in sO.lampSaves)
         {
-            GameObject g = Instantiate<GameObject>(lampPreset);
+            GameObject g;
+            if (s.lType == LampSave.LampType.VLB)
+            {
+                g = Instantiate(lampPreset);
+                VolumetricLightBeam gV = g.GetComponent<VolumetricLightBeam>();
+                
+                //TODO set all VLB informations lel
+            }else if (s.lType == LampSave.LampType.FLAME)
+            {
+                g = Instantiate(flamePreset);
+            }
+            else if (s.lType == LampSave.LampType.CYL)
+            {
+                g = Instantiate(clyPreset);
+            }
+            else
+            {
+
+                //this is an error
+                Debug.LogError("cant find Lamp Type!");
+                g = Instantiate(lampPreset);
+            }
+
+
             g.transform.SetParent(lampSpawnpoint);
             g.transform.position = s.position;
             g.transform.rotation = s.rotation;
@@ -70,12 +95,7 @@ public class LevelDataLoader : MonoBehaviour
 
 
 
-            if (s.lType == LampSave.LampType.VLB)
-            {
-                VolumetricLightBeam gV = g.GetComponent<VolumetricLightBeam>();
-
-                //TODO set all VLB informations lel
-            }
+            
 
         }
         

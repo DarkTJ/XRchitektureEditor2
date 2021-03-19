@@ -203,7 +203,8 @@ public class DmxController : MonoBehaviour
         public void Initialize()
         {
             dmxDevicesSearch = GameObject.FindGameObjectsWithTag("DMX");
-
+            devices = new DMXDevice[dmxDevicesSearch.Length];
+            //devices = new ArrayList();
             int x = 0;
             var startChannel = 0;
             //check for desired dmx channel !

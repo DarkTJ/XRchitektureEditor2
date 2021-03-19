@@ -8,6 +8,7 @@ public class MovingLight : DMXDevice
 {
 
     public override int NumChannels{ get { return 13; } }
+    public override LampSave.LampType lType { get { return LampSave.LampType.VLB; } }
     public Transform panRotater;
     public Transform tiltRotater;
 

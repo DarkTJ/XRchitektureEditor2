@@ -57,6 +57,8 @@ public class LevelDataSaver : MonoBehaviour
             //LampDetails gDetail = g.GetComponent<LampDetails>();
             DMXDevice gD = g.GetComponent<DMXDevice>();
 
+            s.lType = gD.lType;
+
             //s.lType = gDetail.lType;
 
             if (s.lType == LampSave.LampType.VLB)
@@ -64,6 +66,12 @@ public class LevelDataSaver : MonoBehaviour
                 VolumetricLightBeam gV = g.GetComponent<VolumetricLightBeam>();
 
                 //TODO get all the VLB Lamp infomations lel
+            }
+            if (s.lType == LampSave.LampType.FLAME)
+            {
+                FlameThrower fT = g.GetComponent<FlameThrower>();
+
+                //TODO GET Something here ?
             }
 
             s.position = g.transform.position;

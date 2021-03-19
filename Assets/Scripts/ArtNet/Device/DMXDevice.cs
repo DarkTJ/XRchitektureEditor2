@@ -9,6 +9,8 @@ public abstract class DMXDevice : MonoBehaviour
     public bool startChannelSET;
     public abstract int NumChannels { get; }
 
+    public abstract LampSave.LampType lType { get; }
+
 
     public virtual void SetData(byte[] dmxData)
     {

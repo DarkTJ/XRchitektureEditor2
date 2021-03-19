@@ -7,7 +7,7 @@ public class CylLight : DMXDevice
 
 
     public override int NumChannels { get { return 5; } }
-    
+    public override LampSave.LampType lType { get { return LampSave.LampType.CYL; } }
 
     [Header("rotateProps")]
     public float heightMovement = 1.5f;

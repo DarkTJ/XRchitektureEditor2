@@ -12,7 +12,8 @@ public class LampSave
     {
         VLB,
         CYL,
-        WASH
+        WASH,
+        FLAME
     }
 
     public LampType lType;

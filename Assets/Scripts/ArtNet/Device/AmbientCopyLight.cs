@@ -9,7 +9,7 @@ public class AmbientCopyLight : MonoBehaviour
     public float range = 5f;
 
     private Light lamp;
-
+    private float defaultIntensity;
     public Color color;
 
 
@@ -19,13 +19,14 @@ public class AmbientCopyLight : MonoBehaviour
     void Start()
     {
         lamp = this.GetComponent<Light>();
-
+        defaultIntensity = lamp.intensity;
         objectToSample = FindGameObjectsInsideRange(this.transform.position, range);
     }
 
     // Update is called once per frame
     void Update()
     {
+        lamp.intensity = defaultIntensity;
         color = Color.black;
         for (int i = 0;i < objectToSample.Length; i++)
         {
@@ -39,9 +40,26 @@ public class AmbientCopyLight : MonoBehaviour
                 //color = Color.white - (Color.white - color) * (Color.white - objectToSample[i].GetComponentInChildren<Renderer>().material.GetColor("_EmissionColor"));
                 //color = color + ((Vector3.Distance(this.transform.position,objectToSample[i].GetComponentInChildren<Renderer>().transform.position)/5f + 0.2f) * objectToSample[i].GetComponentInChildren<Renderer>().material.GetColor("_EmissionColor"));
                 color = color + (objectToSample[i].GetComponent<Renderer>().material.GetColor("_EmissionColor"));
-            } else
+            } else if (objectToSample[i].GetComponentInParent<FlameThrower>() != null) 
             {
-                
+                FlameThrower f = objectToSample[i].GetComponentInParent<FlameThrower>();
+                if (f.flameVideo.isPlaying == true)
+                {
+                    
+                    if (f.endingFlames == false)
+                    {
+                        lamp.intensity = 2 * defaultIntensity;
+                        color += 10 * new Color(1, 0.33f, 0, 1);
+                    }
+                    else
+                    {
+                        int frame =  Mathf.RoundToInt(30 - f.flameVideo.frame);
+                        if (Mathf.Sign(frame) == -1) { frame = 0; }
+                        color += frame*0.31f * new Color(1, 0.33f, 0, 1);
+                    }
+                    
+                   
+                }
             }
                 
                
