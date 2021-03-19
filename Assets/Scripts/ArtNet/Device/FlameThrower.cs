@@ -12,6 +12,8 @@ public class FlameThrower : DMXDevice
     public VideoClip flameMID;
     public VideoClip flameEnd;
 
+    public GameObject FlameFace;
+
     public override LampSave.LampType lType { get { return LampSave.LampType.FLAME; } }
 
     public int playBackSpeedSLOW = 1;
@@ -69,6 +71,11 @@ public class FlameThrower : DMXDevice
     void Update()
     {
         //check for changes while running
+
+
+        //always face the player. 2D Fun lel
+        FlameFace.transform.LookAt(Camera.main.transform);
+        FlameFace.transform.localEulerAngles = new Vector3(0, FlameFace.transform.localEulerAngles.y, 0);
     }
 
 

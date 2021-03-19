@@ -36,7 +36,7 @@ public class CylLight : DMXDevice
     public override void SetData(byte[] dmxData)
     {
         base.SetData(dmxData);
-        SetHeight(dmxData[0]);
+        //SetHeight(dmxData[0]);
         //SetTilt(dmxData[2], 0);
 
         SetColor(dmxData[2], dmxData[3], dmxData[4], dmxData[1]);

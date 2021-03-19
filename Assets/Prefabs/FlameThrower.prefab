@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1702367383002575883
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6871453049794297780}
+  m_Layer: 0
+  m_Name: FlameThrowerTurningBase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6871453049794297780
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702367383002575883}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 8798813914624653872}
+  m_Father: {fileID: 8798813914981124146}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8798813914624653879
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,8 +61,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 4.63, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 8798813914981124146}
-  m_RootOrder: 1
+  m_Father: {fileID: 6871453049794297780}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: -90}
 --- !u!33 &8798813914624653884
 MeshFilter:
@@ -112,7 +143,7 @@ VideoPlayer:
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 0
-  m_SkipOnDrop: 0
+  m_SkipOnDrop: 1
   m_Looping: 1
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
@@ -146,7 +177,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8798813915236051380}
-  - {fileID: 8798813914624653872}
+  - {fileID: 6871453049794297780}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -169,6 +200,7 @@ MonoBehaviour:
   flameStart: {fileID: 32900000, guid: afa279267c5fdc24999236553bac3573, type: 3}
   flameMID: {fileID: 32900000, guid: f3c6373bfe058264391b83dae0533934, type: 3}
   flameEnd: {fileID: 32900000, guid: 1319528ec8ada1d4b98b14959b5018df, type: 3}
+  FlameFace: {fileID: 1702367383002575883}
   playBackSpeedSLOW: 1
   playBackSpeedFast: 4
   endingFlames: 0

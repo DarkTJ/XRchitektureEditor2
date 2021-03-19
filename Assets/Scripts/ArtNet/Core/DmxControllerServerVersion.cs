@@ -63,6 +63,7 @@ public class DmxControllerServerVersion : MonoBehaviour
             u.Initialize();
     }
 
+
     public bool newPacket;
     void Start()
     {
@@ -227,12 +228,27 @@ public class DmxControllerServerVersion : MonoBehaviour
             //check for desired dmx channel !
             foreach (GameObject g in dmxDevicesSearch)
             {
+                
                 DMXDevice d = g.GetComponent<DMXDevice>();
-                devices[x] =d;
-                d.startChannel = startChannel;
-                startChannel += d.NumChannels;
-                d.name = string.Format("{0}:({1},{2:d3}-{3:d3})", d.GetType().ToString(), universe, d.startChannel, startChannel - 1);
-                x++;
+                if (d.universe == universe)
+                {
+                    devices[x] = d;
+                    if (d.startChannelSET == false)
+                    {
+                        d.startChannel = startChannel;
+                    }
+                    else
+                    {
+                        if (startChannel < d.startChannel)
+                        {
+                            startChannel = d.startChannel;
+                        }
+                    }
+                    startChannel += d.NumChannels;
+                    d.name = string.Format("{0}:({1},{2:d3}-{3:d3})", d.GetType().ToString(), universe, d.startChannel, startChannel - 1);
+                    x++;
+                }
+                
             }
         }
 

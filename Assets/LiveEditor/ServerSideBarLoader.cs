@@ -20,7 +20,7 @@ public class ServerSideBarLoader : MonoBehaviour
     public Button stopButton;
     public TextMeshProUGUI musicText;
     public AudioSource MusicPlayer;
-    public float musicMaxLength;
+    public string musicMaxLength;
 
     // Start is called before the first frame update
     void Start()
@@ -31,7 +31,7 @@ public class ServerSideBarLoader : MonoBehaviour
         playButton.onClick.AddListener(playMusicButton);
         stopButton.onClick.AddListener(StopMusicButton);
 
-        musicMaxLength = MusicPlayer.clip.length;
+        musicMaxLength = Mathf.Floor(MusicPlayer.clip.length / 60) + ":" + Mathf.Floor(MusicPlayer.clip.length) % 60 + ":" + Mathf.Floor((MusicPlayer.clip.length % 1) * 1000);
         
     }
 
@@ -39,9 +39,9 @@ public class ServerSideBarLoader : MonoBehaviour
     void Update()
     {
         //MUSIC Updates 4 Server:
-        
+
         //music UI Update:
-        musicText.text = MusicPlayer.time.ToString() + " / " + musicMaxLength;
+        musicText.text = Mathf.Floor(MusicPlayer.time / 60) + ":" + Mathf.Floor(MusicPlayer.time) % 60 + ":" + Mathf.Floor((MusicPlayer.time % 1)*1000) + " / " + musicMaxLength;
     }
 
     void SaveToFilePress()

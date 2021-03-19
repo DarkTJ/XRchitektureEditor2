@@ -3,7 +3,7 @@ Shader "Unlit/Flamethrower"
     Properties
     {
         _MainTex("Base (RGB)", 2D) = "white" {}
-        _Threshold("Cutout threshold", Range(0,1)) = 0.1
+        _Threshold("Cutout threshold", Range(0,1)) = 0.8
         _Softness("Cutout softness", Range(0,0.5)) = 0.0
     }
         SubShader
