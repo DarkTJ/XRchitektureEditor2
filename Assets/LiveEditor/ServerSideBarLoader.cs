@@ -8,6 +8,7 @@ using TMPro;
 public class ServerSideBarLoader : MonoBehaviour
 {
     public Button connectToServerButton;
+    public Button disconnectFromTCPServer;
     public TMP_InputField ipInput;
     public TCPSendingClient sendingClient;
     public Button saveToFileButton;
@@ -28,6 +29,7 @@ public class ServerSideBarLoader : MonoBehaviour
         saveToFileButton.onClick.AddListener(SaveToFilePress);
         loadFromFileButton.onClick.AddListener(LoadFromFilePress);
         connectToServerButton.onClick.AddListener(connectToServerFromButtonpress);
+        disconnectFromTCPServer.onClick.AddListener(diconnectFromServer);
         playButton.onClick.AddListener(playMusicButton);
         stopButton.onClick.AddListener(StopMusicButton);
 
@@ -64,6 +66,11 @@ public class ServerSideBarLoader : MonoBehaviour
     private void connectToServerFromButtonpress()
     {
         sendingClient.connectToArtNetServer(ipInput.text);
+    }
+
+    private void diconnectFromServer() 
+    {
+        sendingClient.disconnectFromServer();
     }
 
     void playMusicButton()

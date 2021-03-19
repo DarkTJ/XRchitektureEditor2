@@ -82,6 +82,13 @@ public class TCPSendingClient : MonoBehaviour
         serverIP = IP;
         ConnectToTcpServer();
     }
+
+    public void disconnectFromServer()
+    {
+        CancelInvoke("SendArtNet");
+        clientReceiveThread.Abort();
+        ServerStatusTextSet("NoConnection", false);
+    }
     /// <summary> 	
     /// Setup socket connection. 	
     /// </summary> 	
