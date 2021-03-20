@@ -30,7 +30,8 @@ public class ServerSideBarLoader : MonoBehaviour
     public DmxControllerServerVersion dmxController;
     public System.Net.IPAddress[] adressen;
     private int Adresse = 0;
-    
+
+    public bool started = false;
 
     // Start is called before the first frame update
     void Start()
@@ -46,16 +47,29 @@ public class ServerSideBarLoader : MonoBehaviour
 
         ArtNetIP.text = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList[0].ToString();
         adressen = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList;
-        musicMaxLength = Mathf.Floor(MusicPlayer.clip.length / 60) + ":" + Mathf.Floor(MusicPlayer.clip.length) % 60 + ":" + Mathf.Floor((MusicPlayer.clip.length % 1) * 1000);
+        musicMaxLength = Mathf.Floor((MusicPlayer.clip.length + 4.173f) / 60) + ":" + Mathf.Floor((MusicPlayer.clip.length + 4.173f)) % 60 + ":" + Mathf.Floor(((MusicPlayer.clip.length + 4.173f) % 1) * 1000);
         
+
     }
 
     // Update is called once per frame
     void Update()
     {
         //MUSIC Updates 4 Server:
-        sendingClient.getMusicStatus(MusicPlayer.time);        //music UI Update:
+        float mU;
+        mU = (MusicPlayer.time - 4.173f);
+        if (mU < 0) { mU = 0; }
+        sendingClient.getMusicStatus(mU);        //music UI Update:
         musicText.text = Mathf.Floor(MusicPlayer.time / 60) + ":" + Mathf.Floor(MusicPlayer.time) % 60 + ":" + Mathf.Floor((MusicPlayer.time % 1)*1000) + " / " + musicMaxLength;
+
+
+        if (MusicPlayer.isPlaying == false)
+        {
+            if(Input.GetKey("left ctrl") == true && Input.GetKey("h") == true)
+            {
+                playMusicButton();
+            }
+        }
     }
     void nextIpAdressen()
     {
@@ -100,11 +114,13 @@ public class ServerSideBarLoader : MonoBehaviour
     void playMusicButton()
     {
         MusicPlayer.Play();
+        
     }
 
     void StopMusicButton()
     {
         MusicPlayer.Stop();
+        
     }
     
 }
