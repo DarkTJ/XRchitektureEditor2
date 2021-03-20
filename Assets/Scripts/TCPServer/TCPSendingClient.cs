@@ -114,8 +114,8 @@ public class TCPSendingClient : MonoBehaviour
             clientReceiveThread.IsBackground = true;
             clientReceiveThread.Start();
 
-            InvokeRepeating("SendArtNet", 2.0f, 1.0f / paketeProSekunde);
-            InvokeRepeating("SendTele", 1.0f, 1);
+            //InvokeRepeating("SendArtNet", 2.0f, 1.0f / paketeProSekunde);
+            //InvokeRepeating("SendTele", 1.0f, 1);
         }
         catch (Exception e)
         {

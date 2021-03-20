@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 using ArtNet.Packets;
+using TMPro;
+
 
 public class TCPTestClient : MonoBehaviour
 {
@@ -15,12 +17,20 @@ public class TCPTestClient : MonoBehaviour
     private TcpClient socketConnection;
     private Thread clientReceiveThread;
     private ArtNetDmxPacket dart;
+    private TelemetryDataPacket tele;
+    public TelemetryDataPacket clientTele;
+    public string TelemietrieDataPacketString;
     #endregion
+
+    public long packetCount;
+    public string packertCountString;
 
     public string serverIP = "localhost";
 
-    public DmxController dmxcontroller;
+    public DmxControllerServerVersion dmxcontroller;
     public ArtNetPlayer artNetPlayer;
+    public AudioSource mP;
+    public bool MediaPlaying = false;
     public int trackToPlay = 0;
     private int randomTrack;
 
@@ -28,14 +38,19 @@ public class TCPTestClient : MonoBehaviour
     private bool singlePlayerRunning = false;
     private bool serverConnetion = false;
     private bool recievedaDMXfromTheWWW = false;
+    private bool recievedTelePacket = false;
 
-    private string messagesave = "";
+    public string messagesave = "";
+
+    public TextMeshProUGUI PacketCount;
+    public long countrecievedPackages = 0;
 
 
 
     // Use this for initialization 	
     void Start()
     {
+
         randomTrack = UnityEngine.Random.Range(1, 3);
         ConnectToTcpServer();
     }
@@ -46,7 +61,11 @@ public class TCPTestClient : MonoBehaviour
 
         //1.Posibilty the server cant connect 
         //is something playing already ??
-
+        if (PacketCount.text != countrecievedPackages.ToString())
+        {
+            PacketCount.text = countrecievedPackages.ToString();
+        }
+       
 
         //server connected
         //new packet recieved
@@ -57,7 +76,42 @@ public class TCPTestClient : MonoBehaviour
                 dmxcontroller.RecivefromLocalRecorder(dart);
                 //Debug.Log("send data to dmx");
                 recievedaDMXfromTheWWW = false;
-                
+
+            }
+            if (recievedTelePacket)
+            {
+
+                if (tele.fromServer == true)
+                {
+
+                    //send to MusicPlayer
+                    if (tele.MusicFloat != 0)
+                    {
+
+                        if (MediaPlaying == false)
+                        {
+                            mP.Play();
+                            MediaPlaying = true;
+
+                            mP.time = tele.MusicFloat;
+
+                        }
+                    }
+                    else
+                    {
+                        if (MediaPlaying == true)
+                        {
+                            mP.Stop();
+                            MediaPlaying = false;
+                        }
+                    }
+
+
+                    //Do stuff with telemetry;
+                } else if (tele.Rpa10 == 245) {
+
+                    Debug.LogWarning("Found a Control Packet: " + tele.Spa10);
+                }
             }
         }
 
@@ -75,7 +129,7 @@ public class TCPTestClient : MonoBehaviour
 
 
         //saveThe Message
-        
+
         if (messagesave.StartsWith("{"))
         {
             if (messagesave.IndexOf("}") != -1) //starts with {, look for }
@@ -85,11 +139,25 @@ public class TCPTestClient : MonoBehaviour
                 {
                     dart = JsonUtility.FromJson<ArtNetDmxPacket>(d);
                     recievedaDMXfromTheWWW = true;
+                    countrecievedPackages += 1;
 
                 }
                 catch (ArgumentException argumentExeption)
                 {
-                    Debug.Log("cathced JSON EXEPTION AGAIN *facepalm* AND THIS ONE WAS CORRECTED : " + argumentExeption);
+
+                    Debug.Log("cathced  JSON EXEPTION AGAIN *facepalm* AND THIS ONE WAS CORRECTED : " + argumentExeption);
+                }
+                try
+                {
+                    tele = JsonUtility.FromJson<TelemetryDataPacket>(d);
+                    recievedTelePacket = true;
+                    countrecievedPackages += 1;
+
+
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(e);
                 }
                 //Debug.Log("lol" + messagesave);
                 messagesave = messagesave.Remove(0, messagesave.IndexOf("}") + 1);
@@ -109,13 +177,26 @@ public class TCPTestClient : MonoBehaviour
                 Debug.Log("broken Message: " + messagesave);
                 messagesave = "";
             }
-            
+
         }
-        
-       
 
 
 
+
+
+    }
+
+    public void SendTele(uint speed, bool truepacket)
+    {
+        clientTele = new TelemetryDataPacket();
+        clientTele.fromServer = false;
+        clientTele.Spa10 = speed;
+        if (truepacket == true) { clientTele.Rpa10 = 245; }
+        if (socketConnection != null)
+        {
+            TelemietrieDataPacketString = JsonUtility.ToJson(clientTele);
+            SendMessageTOServer(TelemietrieDataPacketString);
+        }
     }
     /// <summary> 	
     /// Setup socket connection. 	
@@ -161,8 +242,8 @@ public class TCPTestClient : MonoBehaviour
 
 
 
-                        
-                        
+
+
                         var incommingData = new byte[length];
                         Array.Copy(bytes, 0, incommingData, 0, length);
                         /*BinaryFormatter formatter = new BinaryFormatter();
@@ -179,34 +260,48 @@ public class TCPTestClient : MonoBehaviour
                         ////Debug.Log(serverMessage);
                         ////Debug.Log(serverMessage[serverMessage.Length - 1] + " " + serverMessage[0]);
                         ////Debug.Log(serverMessage[serverMessage.Length - 1].ToString().Equals("}") + " " + serverMessage[0].ToString().Equals("{"));
-                        if (serverMessage[serverMessage.Length -1].ToString().Equals("}") && serverMessage[0].ToString().Equals("{"))
+                        if (serverMessage[serverMessage.Length - 1].ToString().Equals("}") && serverMessage[0].ToString().Equals("{"))
                         {
                             try
                             {
                                 dart = JsonUtility.FromJson<ArtNetDmxPacket>(serverMessage);
                                 recievedaDMXfromTheWWW = true;
+                                countrecievedPackages += 1;
                                 //Debug.Log("recieved message: " + length);
                             }
-                            catch (ArgumentException argumentExeption)
+                            catch (Exception ex)
                             {
-                                Debug.Log("cathced JSON EXEPTION AGAIN *facepalm* : " + argumentExeption);
+
+                                Debug.Log("cathced JSON EXEPTION AGAIN *facepalm* : " + ex);
+                            }
+                            try
+                            {
+                                tele = JsonUtility.FromJson<TelemetryDataPacket>(serverMessage);
+                                recievedTelePacket = true;
+                                countrecievedPackages += 1;
+
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.Log(e);
                             }
 
                             messagesave = "";
-                           
-                            
-                            
 
-                        } else
+
+
+
+                        }
+                        else
                         {
                             //try to fix the message!!
-                            messagesave = messagesave.Insert(messagesave.Length, serverMessage.ToString() );
-                            
+                            messagesave = messagesave.Insert(messagesave.Length, serverMessage.ToString());
+
                             //Debug.Log("messagesave: " + messagesave + " " + messagesave.StartsWith("{") + " " + messagesave.IndexOf("}"));
                         }
                         //change message to ArtNetOPacket and send it to DMX Controller
-                        
-                        
+
+
                     }
                 }
             }
@@ -214,7 +309,7 @@ public class TCPTestClient : MonoBehaviour
         catch (SocketException socketException)
         {
             Debug.Log("Socket exception: " + socketException);
-            startSinglePlayerbool = true ;
+            startSinglePlayerbool = true;
             serverConnetion = false;
             Debug.Log("ServerConnection False");
         }
@@ -222,10 +317,12 @@ public class TCPTestClient : MonoBehaviour
     /// <summary> 	
     /// Send message to server using socket connection. 	
     /// </summary> 	
-    private void SendMessage()
+    private void SendMessageTOServer(string messagetoSend)
     {
         if (socketConnection == null)
         {
+            Debug.Log("no connection, but tryid it ....");
+            
             return;
         }
         try
@@ -234,16 +331,16 @@ public class TCPTestClient : MonoBehaviour
             NetworkStream stream = socketConnection.GetStream();
             if (stream.CanWrite)
             {
-                string clientMessage = "This is a message from one of your clients.";
-                // Convert string message to byte array.                 
-                byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage);
-                // Write byte array to socketConnection stream.                 
-                stream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
-                //Debug.Log("Client sent his message - should be received by server");
+                byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(messagetoSend);
+                // Write byte array to socketConnection stream.   
+                stream.Write(serverMessageAsByteArray, 0, messagetoSend.Length);
+
+
             }
         }
         catch (SocketException socketException)
         {
+            
             Debug.Log("Socket exception: " + socketException);
         }
     }
@@ -255,15 +352,16 @@ public class TCPTestClient : MonoBehaviour
 
     void startSinglePlayer()
     {
-        if (trackToPlay == 0 || trackToPlay >3 )
+        if (trackToPlay == 0 || trackToPlay > 3)
         {
             //start random playback
             artNetPlayer.StartPlayback(randomTrack);
-        }else
+        }
+        else
         {
             artNetPlayer.StartPlayback(trackToPlay);
         }
-        
+
     }
 
 

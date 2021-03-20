@@ -10,7 +10,7 @@ public class ServerSideBarLoader : MonoBehaviour
     public Button connectToServerButton;
     public Button disconnectFromTCPServer;
     public TMP_InputField ipInput;
-    public TCPSendingClient sendingClient;
+    public TCPTestClient sendingClient;
     public Button saveToFileButton;
     public Button loadFromFileButton;
     public GameObject uIEventSystem;
@@ -23,6 +23,9 @@ public class ServerSideBarLoader : MonoBehaviour
     public AudioSource MusicPlayer;
     public string musicMaxLength;
 
+    public Button sendControlButton;
+    public TMP_InputField RateInputFiled;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,6 +35,7 @@ public class ServerSideBarLoader : MonoBehaviour
         disconnectFromTCPServer.onClick.AddListener(diconnectFromServer);
         playButton.onClick.AddListener(playMusicButton);
         stopButton.onClick.AddListener(StopMusicButton);
+        sendControlButton.onClick.AddListener(sendTeleFromButton);
 
         musicMaxLength = Mathf.Floor(MusicPlayer.clip.length / 60) + ":" + Mathf.Floor(MusicPlayer.clip.length) % 60 + ":" + Mathf.Floor((MusicPlayer.clip.length % 1) * 1000);
         
@@ -41,8 +45,14 @@ public class ServerSideBarLoader : MonoBehaviour
     void Update()
     {
         //MUSIC Updates 4 Server:
-        sendingClient.getMusicStatus(MusicPlayer.time);        //music UI Update:
+        //sendingClient.getMusicStatus(MusicPlayer.time);        //music UI Update:
         musicText.text = Mathf.Floor(MusicPlayer.time / 60) + ":" + Mathf.Floor(MusicPlayer.time) % 60 + ":" + Mathf.Floor((MusicPlayer.time % 1)*1000) + " / " + musicMaxLength;
+    }
+
+    void sendTeleFromButton()
+    {
+        Debug.LogWarning(System.Convert.ToUInt32(RateInputFiled.text));
+        sendingClient.SendTele(System.Convert.ToUInt32(RateInputFiled.text), true);
     }
 
     void SaveToFilePress()
@@ -64,12 +74,12 @@ public class ServerSideBarLoader : MonoBehaviour
 
     private void connectToServerFromButtonpress()
     {
-        sendingClient.connectToArtNetServer(ipInput.text);
+        //sendingClient.connectToArtNetServer(ipInput.text);
     }
 
     private void diconnectFromServer() 
     {
-        sendingClient.disconnectFromServer();
+        //sendingClient.disconnectFromServer();
     }
 
     void playMusicButton()
