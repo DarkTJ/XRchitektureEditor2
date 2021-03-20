@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Linq;
 using UnityEngine;
-
 using ArtNet.Sockets;
 using ArtNet.Packets;
 
@@ -101,6 +100,12 @@ public class DmxControllerServerVersion : MonoBehaviour
                     //recorder.DatatoRecord(packet);
 
                     //send to tcp server
+
+                    //shift dmx werte wenn universe = 0;
+                    if (packet.Universe == 0)
+                    {
+                        packet.DmxData = Shift(packet.DmxData);
+                    }
                     server.ArtNetDatatoSend(packet);
                     server.countrecievedPackages += 1;
 
@@ -127,6 +132,14 @@ public class DmxControllerServerVersion : MonoBehaviour
         }
         
     }
+    static byte[] Shift( byte[] myArray)
+    {
+        byte[] tArray = new byte[myArray.Length];
+        System.Array.Copy(myArray, 0, tArray, 1, myArray.Length - 1);
+        tArray[0] = 0;
+        return tArray;
+    }
+
 
     public void RecivefromLocalRecorder(ArtNetDmxPacket e)
     {
