@@ -23,6 +23,15 @@ public class ServerSideBarLoader : MonoBehaviour
     public AudioSource MusicPlayer;
     public string musicMaxLength;
 
+
+    public TMP_InputField ArtNetIP;
+    public Button startArtNetService;
+    public Button NextIPAdresse;
+    public DmxControllerServerVersion dmxController;
+    public System.Net.IPAddress[] adressen;
+    private int Adresse = 0;
+    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,7 +41,11 @@ public class ServerSideBarLoader : MonoBehaviour
         disconnectFromTCPServer.onClick.AddListener(diconnectFromServer);
         playButton.onClick.AddListener(playMusicButton);
         stopButton.onClick.AddListener(StopMusicButton);
+        startArtNetService.onClick.AddListener(StartArtNetPressed);
+        NextIPAdresse.onClick.AddListener(nextIpAdressen);
 
+        ArtNetIP.text = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList[0].ToString();
+        adressen = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList;
         musicMaxLength = Mathf.Floor(MusicPlayer.clip.length / 60) + ":" + Mathf.Floor(MusicPlayer.clip.length) % 60 + ":" + Mathf.Floor((MusicPlayer.clip.length % 1) * 1000);
         
     }
@@ -44,7 +57,19 @@ public class ServerSideBarLoader : MonoBehaviour
         sendingClient.getMusicStatus(MusicPlayer.time);        //music UI Update:
         musicText.text = Mathf.Floor(MusicPlayer.time / 60) + ":" + Mathf.Floor(MusicPlayer.time) % 60 + ":" + Mathf.Floor((MusicPlayer.time % 1)*1000) + " / " + musicMaxLength;
     }
-
+    void nextIpAdressen()
+    {
+        Adresse += 1;
+        if (Adresse == adressen.Length)
+        {
+            Adresse = 0;
+        }
+        ArtNetIP.text = adressen[Adresse].ToString();
+    }
+    void StartArtNetPressed()
+    {
+        dmxController.StartArtNet(ArtNetIP.text);
+    }
     void SaveToFilePress()
     {
         //open file explorer in folder select#+

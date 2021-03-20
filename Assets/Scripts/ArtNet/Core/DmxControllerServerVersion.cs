@@ -27,6 +27,7 @@ public class DmxControllerServerVersion : MonoBehaviour
     [SerializeField] ArtNetDmxPacket dmxToSend;
 
     byte[] _dmxData;
+    bool startedArtNet = false;
 
     Dictionary<int, byte[]> dmxDataMap;
 
@@ -68,52 +69,63 @@ public class DmxControllerServerVersion : MonoBehaviour
     void Start()
     {
 
-        artnet = new ArtNetSocket();
+        
+    }
 
-        if (isServer)
+    public void StartArtNet(string ipadresse)
+    {
+        if (startedArtNet == false)
         {
-            artnet.Open(FindFromHostName(remoteIP), null);
-            Debug.Log("Server Startet on: " + remoteIP);
-        }
-        //サブネットマスクを設定すると、自分に送らないアドレスを設定してくれる（便利！）
-        //なのだが、デバッグがめんどくさくなる
-        dmxToSend.DmxData = new byte[512];
+            artnet = new ArtNetSocket();
+            remoteIP = ipadresse;
 
-        artnet.NewPacket += (object sender, NewPacketEventArgs<ArtNetPacket> e) =>
-        {
-
-            newPacket = true;
-            if (e.Packet.OpCode == ArtNet.Enums.ArtNetOpCodes.Dmx)
+            if (isServer)
             {
-                var packet = latestReceivedDMX = e.Packet as ArtNetDmxPacket;
-
-
-                //Recorder,sendet alle Artnepakete an die aufnahem
-                //recorder.DatatoRecord(packet);
-
-                //send to tcp server
-                server.ArtNetDatatoSend(packet);
-                server.countrecievedPackages +=1;
-
-                if (packet.DmxData != _dmxData)
-                    _dmxData = packet.DmxData;
-
-                var universe = packet.Universe;
-                if (dmxDataMap.ContainsKey(universe))
-                    dmxDataMap[universe] = packet.DmxData;
-                else
-                    dmxDataMap.Add(universe, packet.DmxData);
+                artnet.Open(FindFromHostName(remoteIP), null);
+                Debug.Log("Server Startet on: " + remoteIP);
             }
-        };
+            //サブネットマスクを設定すると、自分に送らないアドレスを設定してくれる（便利！）
+            //なのだが、デバッグがめんどくさくなる
+            dmxToSend.DmxData = new byte[512];
 
-        if (!useBroadcast || !isServer)
-        {
-            remote = new IPEndPoint(FindFromHostName(remoteIP), ArtNetSocket.Port);
-            Debug.Log(ArtNetSocket.Port + "port genutzt, kein server oder kein boreadcast");
+            artnet.NewPacket += (object sender, NewPacketEventArgs<ArtNetPacket> e) =>
+            {
 
+                newPacket = true;
+                if (e.Packet.OpCode == ArtNet.Enums.ArtNetOpCodes.Dmx)
+                {
+                    var packet = latestReceivedDMX = e.Packet as ArtNetDmxPacket;
+
+
+                    //Recorder,sendet alle Artnepakete an die aufnahem
+                    //recorder.DatatoRecord(packet);
+
+                    //send to tcp server
+                    server.ArtNetDatatoSend(packet);
+                    server.countrecievedPackages += 1;
+
+                    if (packet.DmxData != _dmxData)
+                        _dmxData = packet.DmxData;
+
+                    var universe = packet.Universe;
+                    if (dmxDataMap.ContainsKey(universe))
+                        dmxDataMap[universe] = packet.DmxData;
+                    else
+                        dmxDataMap.Add(universe, packet.DmxData);
+                }
+            };
+
+            if (!useBroadcast || !isServer)
+            {
+                remote = new IPEndPoint(FindFromHostName(remoteIP), ArtNetSocket.Port);
+                Debug.Log(ArtNetSocket.Port + "port genutzt, kein server oder kein boreadcast");
+
+            }
+
+            dmxDataMap = new Dictionary<int, byte[]>();
+            startedArtNet = true;
         }
-
-        dmxDataMap = new Dictionary<int, byte[]>();
+        
     }
 
     public void RecivefromLocalRecorder(ArtNetDmxPacket e)
@@ -141,22 +153,26 @@ public class DmxControllerServerVersion : MonoBehaviour
 
     private void Update()
     {
-        var keys = dmxDataMap.Keys.ToArray();
-
-        for (var i = 0; i < keys.Length; i++)
+        if (startedArtNet == true)
         {
-            var universe = keys[i];
-            var dmxData = dmxDataMap[universe];
-            if (dmxData == null)
-                continue;
+            var keys = dmxDataMap.Keys.ToArray();
 
-            var universeDevices = universes.Where(u => u.universe == universe).FirstOrDefault();
-            if (universeDevices != null)
-                foreach (DMXDevice d in universeDevices.devices)
-                    d.SetData(dmxData.Skip(d.startChannel).Take(d.NumChannels).ToArray());
+            for (var i = 0; i < keys.Length; i++)
+            {
+                var universe = keys[i];
+                var dmxData = dmxDataMap[universe];
+                if (dmxData == null)
+                    continue;
 
-            dmxDataMap[universe] = null;
+                var universeDevices = universes.Where(u => u.universe == universe).FirstOrDefault();
+                if (universeDevices != null)
+                    foreach (DMXDevice d in universeDevices.devices)
+                        d.SetData(dmxData.Skip(d.startChannel).Take(d.NumChannels).ToArray());
+
+                dmxDataMap[universe] = null;
+            }
         }
+        
     }
 
     static IPAddress FindFromHostName(string hostname)
