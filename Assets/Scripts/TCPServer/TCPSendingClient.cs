@@ -28,6 +28,8 @@ public class TCPSendingClient : MonoBehaviour
     public string TelemietrieDataPacketString;
     public TelemetryDataPacket TelemietrieDataP;
 
+    public TelemetryDataPacket SteuerDataPacket;
+
 
     private byte[] lastdmxZwischenspeicherUniverse0;
     private byte[] lastdmxZwischenspeicherUniverse1;
@@ -195,16 +197,27 @@ public class TCPSendingClient : MonoBehaviour
                         //Debug.Log(serverMessage);
                         //Debug.Log(serverMessage[serverMessage.Length - 1] + " " + serverMessage[0]);
                         //Debug.Log(serverMessage[serverMessage.Length - 1].ToString().Equals("}") + " " + serverMessage[0].ToString().Equals("{"));
-                        /*if (serverMessage[serverMessage.Length -1].ToString().Equals("}") && serverMessage[0].ToString().Equals("{"))
+                        if (serverMessage[serverMessage.Length -1].ToString().Equals("}") && serverMessage[0].ToString().Equals("{"))
                         {
-                            dart = JsonUtility.FromJson<ArtNetDmxPacket>(serverMessage);
-                            dmxcontroller.RecivefromLocalRecorder(dart);
-                            Debug.Log(length);
+                            try
+                            {
+                                SteuerDataPacket = JsonUtility.FromJson<TelemetryDataPacket>(serverMessage);
+                                if (SteuerDataPacket.fromServer == false && SteuerDataPacket.Rpa10 == 245)
+                                {
+                                    CancelInvoke("SendArtNet");
+                                    InvokeRepeating("SendArtNet", 0.2f, 1.0f / SteuerDataPacket.Spa10);
+                                }
+                                
+                            } catch
+                            {
+                                Debug.Log("no Tlemetry Packet? What is it ?");
+                            }
+                            
                         } else
                         {
                             Debug.Log("broken Message");
-                        }*/
-                        Debug.Log("recieved message, but ignoring it LOL");
+                        }
+                        
                         //change message to ArtNetOPacket and send it to DMX Controller
 
 
