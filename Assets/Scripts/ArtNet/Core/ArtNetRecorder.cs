@@ -16,11 +16,11 @@ public class ArtNetRecorder : MonoBehaviour
 
     //public StudioEventEmitter[] track;
 
-    public Button[] playbackbuttons;
+    //public Button[] playbackbuttons;
 
 
 
-    public int RecordRate = 10;
+    public int RecordRate = 30;
 
     int saveNumber = 1;
 
@@ -110,11 +110,11 @@ public class ArtNetRecorder : MonoBehaviour
 
     void SwitchSave(int saveNr)
     {
-        Button[] saveButtons = { save1Button, save2Button, save3Button, playbackbuttons[0], playbackbuttons[1], playbackbuttons[2], playbackbuttons[3] };
+        Button[] saveButtons = { save1Button, save2Button, save3Button, /*playbackbuttons[0], playbackbuttons[1], playbackbuttons[2], playbackbuttons[3]*/ };
 
         saveNumber = saveNr;
 
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < saveButtons.Length; i++)
         {
             saveButtons[i].image.color = Color.white;
         }
@@ -156,13 +156,13 @@ public class ArtNetRecorder : MonoBehaviour
 
     public void lockUnlockButtons(bool l)
     {
-        Button[] saveButtons = { save1Button, save2Button, save3Button, playbackbuttons[3], playbackbuttons[1], playbackbuttons[2] };
+        Button[] saveButtons = { save1Button, save2Button, save3Button, /*playbackbuttons[3], playbackbuttons[1], playbackbuttons[2]*/ };
 
         if (l == true)
         {
             //lock all buttons
             //save buttons sperren
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < saveButtons.Length; i++)
             {
                 saveButtons[i].interactable = false;
             }
@@ -172,7 +172,7 @@ public class ArtNetRecorder : MonoBehaviour
         {
             //unlock all buttons
             //save buttons wieder entsperren
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < saveButtons.Length; i++)
             {
                 saveButtons[i].interactable = true;
             }

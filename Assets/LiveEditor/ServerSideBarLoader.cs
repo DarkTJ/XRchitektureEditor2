@@ -31,7 +31,7 @@ public class ServerSideBarLoader : MonoBehaviour
     {
         saveToFileButton.onClick.AddListener(SaveToFilePress);
         loadFromFileButton.onClick.AddListener(LoadFromFilePress);
-        connectToServerButton.onClick.AddListener(connectToServerFromButtonpress);
+        connectToServerButton.onClick.AddListener(recconect);
         disconnectFromTCPServer.onClick.AddListener(diconnectFromServer);
         playButton.onClick.AddListener(playMusicButton);
         stopButton.onClick.AddListener(StopMusicButton);
@@ -63,6 +63,11 @@ public class ServerSideBarLoader : MonoBehaviour
         //fuck shit up 
 
 
+    }
+
+    void recconect()
+    {
+        sendingClient.recconecttoServer();
     }
 
     void LoadFromFilePress()

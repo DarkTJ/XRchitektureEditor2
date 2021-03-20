@@ -121,8 +121,9 @@ public class DmxControllerServerVersion : MonoBehaviour
         newPacket = true;
         if (e.OpCode == ArtNet.Enums.ArtNetOpCodes.Dmx)
         {
-            var packet = latestReceivedDMX = e as ArtNetDmxPacket;
 
+            var packet = latestReceivedDMX = e as ArtNetDmxPacket;
+            recorder.DatatoRecord(packet);
             if (packet.DmxData != _dmxData)
                 _dmxData = packet.DmxData;
 

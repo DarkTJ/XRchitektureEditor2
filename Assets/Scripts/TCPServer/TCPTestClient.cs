@@ -45,7 +45,11 @@ public class TCPTestClient : MonoBehaviour
     public TextMeshProUGUI PacketCount;
     public long countrecievedPackages = 0;
 
-
+    public void recconecttoServer()
+    {
+        clientReceiveThread.Abort();
+        ConnectToTcpServer();
+    }
 
     // Use this for initialization 	
     void Start()
@@ -162,20 +166,26 @@ public class TCPTestClient : MonoBehaviour
                 //Debug.Log("lol" + messagesave);
                 messagesave = messagesave.Remove(0, messagesave.IndexOf("}") + 1);
                 //Debug.Log("lol2" + messagesave);
-                //Debug.Log("recoverd broken message: " + d);
+                Debug.Log("recoverd broken message: " + d);
             }
 
         }
         else if (messagesave.IndexOf("}") != -1) //if message contains a } delete everything up to that point
         {
-            messagesave.Remove(0, messagesave.IndexOf("}") + 1);
+            //messagesave.Remove(0, messagesave.IndexOf("}") + 1);
+
+            //THIS COUDL CHANGE EVERYTHING
+            messagesave = "";
+            Debug.LogWarning("deleted faulty message top");
         }
         else
         {
             if (messagesave != "")
             {
-                Debug.Log("broken Message: " + messagesave);
                 messagesave = "";
+                Debug.LogWarning("deleted faulty message bottom");
+                
+                
             }
 
         }
