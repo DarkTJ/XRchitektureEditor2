@@ -41,8 +41,7 @@ public class ServerSideBarLoader : MonoBehaviour
     void Update()
     {
         //MUSIC Updates 4 Server:
-
-        //music UI Update:
+        sendingClient.getMusicStatus(MusicPlayer.time);        //music UI Update:
         musicText.text = Mathf.Floor(MusicPlayer.time / 60) + ":" + Mathf.Floor(MusicPlayer.time) % 60 + ":" + Mathf.Floor((MusicPlayer.time % 1)*1000) + " / " + musicMaxLength;
     }
 

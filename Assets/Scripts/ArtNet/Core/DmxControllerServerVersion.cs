@@ -221,7 +221,17 @@ public class DmxControllerServerVersion : MonoBehaviour
         public void Initialize()
         {
             dmxDevicesSearch = GameObject.FindGameObjectsWithTag("DMX");
-            devices = new DMXDevice[dmxDevicesSearch.Length];
+            int leangeDevices = 0;
+            //count devices
+            foreach (GameObject g in dmxDevicesSearch)
+            {
+                DMXDevice d = g.GetComponent<DMXDevice>();
+                if (d.universe == universe)
+                {
+                    leangeDevices += 1;
+                }
+            }
+                devices = new DMXDevice[leangeDevices];
             //devices = new ArrayList();
             int x = 0;
             var startChannel = 0;

@@ -78,7 +78,7 @@ public class LevelDataSaver : MonoBehaviour
             s.rotation = g.transform.rotation;
             s.startChannel = gD.startChannel;
 
-            
+            s.universe = gD.universe;
             
             lampSavesList.Add(s);
 

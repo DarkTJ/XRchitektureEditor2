@@ -39,7 +39,7 @@ public class CylLight : DMXDevice
         //SetHeight(dmxData[0]);
         //SetTilt(dmxData[2], 0);
 
-        SetColor(dmxData[2], dmxData[3], dmxData[4], dmxData[1]);
+        SetColor(dmxData[1], dmxData[2], dmxData[3], 255);
 
     }
 
@@ -58,7 +58,7 @@ public class CylLight : DMXDevice
         }
         else
         {*/
-            cylinderLight.GetComponent<Renderer>().material.SetColor("_EmissionColor", new Vector4(r / 265f, g / 265f, b / 265f, (a / 265f) * 15));
+            cylinderLight.GetComponent<Renderer>().material.SetColor("_EmissionColor", new Vector4(r / 265f, g / 265f, b / 265f, a));
            
         //}
 

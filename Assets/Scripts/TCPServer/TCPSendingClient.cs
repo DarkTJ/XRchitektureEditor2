@@ -24,9 +24,14 @@ public class TCPSendingClient : MonoBehaviour
     public int paketeProSekunde = 10;
     public string dmxZwischenspeicherUniverse0;
     public string dmxZwischenspeicherUniverse1;
+
+    public string TelemietrieDataPacketString;
+    public TelemetryDataPacket TelemietrieDataP;
+
+
     private byte[] lastdmxZwischenspeicherUniverse0;
     private byte[] lastdmxZwischenspeicherUniverse1;
-
+    
     public DmxControllerServerVersion dmxcontroller;
 
 
@@ -58,7 +63,8 @@ public class TCPSendingClient : MonoBehaviour
     // Use this for initialization 	
     void Start()
     {
-
+        TelemietrieDataP = new TelemetryDataPacket();
+        TelemietrieDataP.fromServer = true;
     }
     // Update is called once per frame
     void Update()
@@ -86,8 +92,14 @@ public class TCPSendingClient : MonoBehaviour
     public void disconnectFromServer()
     {
         CancelInvoke("SendArtNet");
+        CancelInvoke("SendTele");
         clientReceiveThread.Abort();
         ServerStatusTextSet("NoConnection", false);
+    }
+
+    public void getMusicStatus(float t)
+    {
+        TelemietrieDataP.MusicFloat = t;
     }
     /// <summary> 	
     /// Setup socket connection. 	
@@ -101,11 +113,20 @@ public class TCPSendingClient : MonoBehaviour
             clientReceiveThread.Start();
 
             InvokeRepeating("SendArtNet", 2.0f, 1.0f / paketeProSekunde);
+            InvokeRepeating("SendTele", 1.0f, 1);
         }
         catch (Exception e)
         {
             //Debug.Log("On client connect exception " + e);
             ServerStatusTextSet(e.ToString(), false);
+        }
+    }
+    private void SendTele()
+    {
+        if (socketConnection != null)
+        {
+            TelemietrieDataPacketString = JsonUtility.ToJson(TelemietrieDataP);
+            SendMessageTOServer(TelemietrieDataPacketString);
         }
     }
 
@@ -233,6 +254,7 @@ public class TCPSendingClient : MonoBehaviour
     void OnApplicationQuit()
     {
         CancelInvoke("SendArtNet");
+        CancelInvoke("SendTele");
         clientReceiveThread.Abort();
     }
 
